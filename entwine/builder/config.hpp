@@ -139,6 +139,33 @@ public:
     {
         return m_json.value("cacheSize", 64);
     }
+    uint64_t maxDepth(const Bounds& cube) const
+    {
+        if (m_json.count("maxDepth"))
+        {
+            return m_json.at("maxDepth").get<uint64_t>();
+        }
+
+        if (m_json.count("maxResolution"))
+        {
+            const double maxResolution(
+                    m_json.at("maxResolution").get<double>());
+
+            double currentResolution(cube.width() / span());
+
+            uint64_t depth(1);
+
+            while (currentResolution > maxResolution)
+            {
+                currentResolution /= 2;
+                ++depth;
+            }
+
+            return depth;
+        }
+
+        return 0;
+    }
 
     uint64_t hierarchyStep() const { return m_json.value("hierarchyStep", 0); }
 

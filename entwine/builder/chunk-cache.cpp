@@ -36,12 +36,14 @@ ChunkCache::ChunkCache(
         Pool& ioPool,
         const arbiter::Endpoint& out,
         const arbiter::Endpoint& tmp,
-        const uint64_t cacheSize)
+        const uint64_t cacheSize,
+        const uint64_t maxDepth)
     : m_hierarchy(hierarchy)
     , m_pool(ioPool)
     , m_out(out)
     , m_tmp(tmp)
     , m_cacheSize(cacheSize)
+    , m_maxDepth(maxDepth)
 { }
 
 ChunkCache::~ChunkCache()
@@ -59,13 +61,14 @@ ChunkCache::~ChunkCache()
                 }));
 }
 
-void ChunkCache::insert(
+bool ChunkCache::insert(
         Voxel& voxel,
         Key& key,
         const ChunkKey& ck,
         Clipper& clipper)
 {
-    assert(ck.depth() < maxDepth);
+    assert(ck.depth() < 64);
+    if (m_maxDepth && ck.depth() >= m_maxDepth) return false;
 
     // Get from single-threaded cache if we can.
     Chunk* chunk = clipper.get(ck);
@@ -74,12 +77,12 @@ void ChunkCache::insert(
     if (!chunk) chunk = &addRef(ck, clipper);
 
     // Try to insert the point into this chunk.
-    if (chunk->insert(*this, clipper, voxel, key)) return;
+    if (chunk->insert(*this, clipper, voxel, key)) return true;
 
     // Failed to insert - need to traverse to the next depth.
     key.step(voxel.point());
     const Dir dir(getDirection(ck.bounds().mid(), voxel.point()));
-    insert(voxel, key, chunk->childAt(dir), clipper);
+    return insert(voxel, key, chunk->childAt(dir), clipper);
 }
 
 Chunk& ChunkCache::addRef(const ChunkKey& ck, Clipper& clipper)

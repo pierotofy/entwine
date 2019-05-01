@@ -321,8 +321,10 @@ void Builder::insertPath(const Origin originId, FileInfo& info)
                 if (!boundsSubset || boundsSubset->contains(point))
                 {
                     key.init(point);
-                    m_registry->addPoint(voxel, key, ck, clipper);
-                    pointStats.addInsert();
+                    if (m_registry->addPoint(voxel, key, ck, clipper))
+                    {
+                        pointStats.addInsert();
+                    }
                 }
             }
             else if (m_metadata->primary()) pointStats.addOutOfBounds();

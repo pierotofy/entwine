@@ -189,6 +189,11 @@ void Build::addArgs()
             "logging (default: 10).",
             [this](json j) { m_json["progressInterval"] = extract(j); });
 
+    m_ap.add(
+            "--maxResolution",
+            "Maximum voxel edge length, in native units.  0 for unlimited.",
+            [this](json j) { m_json["maxResolution"] = extract(j); });
+
     addArbiter();
 }
 
@@ -376,6 +381,15 @@ void Build::log(const Builder& b) const
         "\tMaximum node size: " << commify(metadata.maxNodeSize()) << "\n" <<
         "\tMinimum node size: " << commify(metadata.minNodeSize()) << "\n" <<
         "\tCache size: " << commify(metadata.cacheSize()) << "\n";
+
+    if (metadata.maxDepth())
+    {
+        const uint64_t maxDepth(metadata.maxDepth());
+        const double maxResolution(metadata.maxResolution());
+        std::cout << "\tMaximum resolution: " << maxResolution <<
+            " units\n";
+        std::cout << "\tMaximum depth: " << maxDepth << "\n";
+    }
 
     if (const Subset* s = metadata.subset())
     {

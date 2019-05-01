@@ -44,9 +44,9 @@ public:
     void save(uint64_t hierarchyStep, bool verbose);
     void merge(const Registry& other, Clipper& clipper);
 
-    void addPoint(Voxel& voxel, Key& key, ChunkKey& ck, Clipper& clipper)
+    bool addPoint(Voxel& voxel, Key& key, ChunkKey& ck, Clipper& clipper)
     {
-        m_chunkCache->insert(voxel, key, ck, clipper);
+        return m_chunkCache->insert(voxel, key, ck, clipper);
     }
 
     Pool& workPool() { return m_threadPools.workPool(); }

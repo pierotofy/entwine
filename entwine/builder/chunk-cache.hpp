@@ -13,7 +13,6 @@
 #include <array>
 
 #include <entwine/builder/chunk.hpp>
-#include <entwine/types/defs.hpp>
 #include <entwine/util/spin-lock.hpp>
 
 namespace entwine
@@ -67,11 +66,12 @@ public:
             Pool& ioPool,
             const arbiter::Endpoint& out,
             const arbiter::Endpoint& tmp,
-            uint64_t cacheSize);
+            uint64_t cacheSize,
+            uint64_t maxDepth = 0);
 
     ~ChunkCache();
 
-    void insert(Voxel& voxel, Key& key, const ChunkKey& ck, Clipper& clipper);
+    bool insert(Voxel& voxel, Key& key, const ChunkKey& ck, Clipper& clipper);
     void clip(uint64_t depth, const std::map<Xyz, Chunk*>& stale);
     void clipped() { maybePurge(m_cacheSize); }
 
@@ -95,9 +95,10 @@ private:
     const arbiter::Endpoint& m_out;
     const arbiter::Endpoint& m_tmp;
     const uint64_t m_cacheSize = 64;
+    const uint64_t m_maxDepth;
 
-    std::array<SpinLock, maxDepth> m_spins;
-    std::array<std::map<Xyz, ReffedChunk>, maxDepth> m_slices;
+    std::array<SpinLock, 64> m_spins;
+    std::array<std::map<Xyz, ReffedChunk>, 64> m_slices;
 
     SpinLock m_ownedSpin;
     std::set<Dxyz> m_owned;

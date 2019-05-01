@@ -50,6 +50,8 @@ Metadata::Metadata(const Config& config, const bool exists)
     , m_minNodeSize(config.minNodeSize())
     , m_maxNodeSize(config.maxNodeSize())
     , m_cacheSize(config.cacheSize())
+    , m_maxDepth(config.maxDepth(boundsCubic()))
+
 {
     if (1ULL << m_startDepth != m_span)
     {
@@ -183,6 +185,18 @@ std::string Metadata::postfix(const uint64_t depth) const
     }
 
     return "";
+}
+
+double Metadata::maxResolution() const
+{
+    const uint64_t md(maxDepth());
+    if (!md) return 0;
+    double currentResolution(boundsCubic().width() / span());
+    for (uint64_t d(0); d < md; ++d)
+    {
+        currentResolution /= 2;
+    }
+    return currentResolution;
 }
 
 Bounds Metadata::makeConformingBounds(Bounds b) const

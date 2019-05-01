@@ -82,6 +82,8 @@ public:
     uint64_t minNodeSize() const { return m_minNodeSize; }
     uint64_t maxNodeSize() const { return m_maxNodeSize; }
     uint64_t cacheSize() const { return m_cacheSize; }
+    uint64_t maxDepth() const { return m_maxDepth; }
+    double maxResolution() const;
 
     void makeWhole();
 
@@ -120,6 +122,7 @@ private:
     const uint64_t m_minNodeSize;
     const uint64_t m_maxNodeSize;
     const uint64_t m_cacheSize;
+    const uint64_t m_maxDepth = 0;
 
     bool m_merged = false;
 };

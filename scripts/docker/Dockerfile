@@ -1,4 +1,4 @@
-FROM connormanning/pdal:master
+FROM connormanning/pdal:1.9
 MAINTAINER Connor Manning <connor@hobu.co>
 
 RUN apt-get update && apt-get install -y \
@@ -35,6 +35,9 @@ ADD https://api.github.com/repos/connormanning/entwine/commits?sha=$branch \
 RUN git clone https://github.com/connormanning/entwine.git /var/entwine && \
     cd /var/entwine && \
     git checkout $branch && \
+    echo "Latest commit:" && \
+    git --no-pager log -n1 && \
+    echo "\n" && \
     mkdir build && \
     cd build && \
     cmake -G Ninja \

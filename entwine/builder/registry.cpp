@@ -43,7 +43,8 @@ Registry::Registry(
                 clipPool(),
                 m_dataEp,
                 m_tmp,
-                m_metadata.cacheSize()))
+                m_metadata.cacheSize(),
+                m_metadata.maxDepth()))
 { }
 
 void Registry::save(const uint64_t hierarchyStep, const bool verbose)
