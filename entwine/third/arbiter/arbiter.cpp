@@ -1271,8 +1271,8 @@ std::string getTempPath()
     else if (const auto t = env("TEMPDIR"))   tmp = *t;
     else tmp = "/tmp";
 #else
-    std::vector<char> path(MAX_PATH, '\0');
-    if (GetTempPath(MAX_PATH, path.data())) tmp.assign(path.data());
+    std::vector<char> path(MAX_PATH + 1, '\0');
+    if (GetTempPathA(MAX_PATH, reinterpret_cast<LPSTR>(path.data()))) tmp.assign(path.data());
 #endif
 
     if (tmp.empty()) throw ArbiterError("Could not find a temp path.");
@@ -4806,6 +4806,8 @@ std::string getDirname(const std::string fullPath)
 
     const std::string protocol(getProtocol(fullPath));
     if (protocol != "file") result = protocol + "://" + result;
+
+    std::cout << fullPath << " --> " << result << std::endl;
 
     return result;
 }

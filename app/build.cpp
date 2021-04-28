@@ -231,6 +231,10 @@ void Build::run()
     {
         if (source.info.points) manifest.emplace_back(source);
         else std::cout << "\t- Skipping " << source.path << std::endl;
+
+        for (auto &err: source.info.errors){
+            std::cout << err << std::endl;
+        }
     }
 
     // It's possible we've just analyzed some files, in which case we have
