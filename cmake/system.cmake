@@ -20,14 +20,20 @@ function(compiler_options target)
             ${OPENSSL_DEFS}
 			${BACKTRACE_DEFS}
     )
+    set(INCLUDE_DIRS ${ROOT_DIR}
+                     ${PROJECT_BINARY_DIR}/include
+                     ${PDAL_INCLUDE_DIRS}
+                     ${LASZIP_DIRECTORIES}
+                     ${JSONCPP_INCLUDE_DIR})
+    if (CURL_FOUND)
+        set(INCLUDE_DIRS ${INCLUDE_DIRS} ${CURL_INCLUDE_DIR})
+    endif()
+    if (OPENSSL_FOUND)
+        set(INCLUDE_DIRS ${INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
+    endif()
+
     target_include_directories(${target}
         PRIVATE
-			${ROOT_DIR}
-            ${PROJECT_BINARY_DIR}/include
-            ${PDAL_INCLUDE_DIRS}
-            ${CURL_INCLUDE_DIR}
-            ${OPENSSL_INCLUDE_DIR}
-            ${LASZIP_DIRECTORIES}
-			${JSONCPP_INCLUDE_DIR}
+            ${INCLUDE_DIRS}
     )
 endfunction()

@@ -70,15 +70,20 @@ else()
     add_library(entwine SHARED ${OBJS})
 endif()
 
+set(LINK_LIBRARIES ${PDAL_LIBRARIES} ${SHLWAPI})
+if (CURL_FOUND)
+    set(LINK_LIBRARIES ${LINK_LIBRARIES} ${CURL_LIBRARIES})
+endif()
+if (OPENSSL_FOUND)
+    set(LINK_LIBRARIES ${LINK_LIBRARIES} ${OPENSSL_LIBRARIES})
+endif()
+
 target_link_libraries(entwine
     PUBLIC
         ${LZMA_LIBRARY}
         ${CMAKE_DL_LIBS}
     PRIVATE
-        ${PDAL_LIBRARIES}
-        ${CURL_LIBRARIES}
-        ${OPENSSL_LIBRARIES}
-        ${SHLWAPI}
+        ${LINK_LIBRARIES}
 )
 
 set_target_properties(
